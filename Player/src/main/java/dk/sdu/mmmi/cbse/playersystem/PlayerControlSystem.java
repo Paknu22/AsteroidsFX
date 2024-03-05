@@ -17,19 +17,24 @@ public class PlayerControlSystem implements IEntityProcessingService {
 
     @Override
     public void process(GameData gameData, World world) {
-            
+        float speed = 1f;
         for (Entity player : world.getEntities(Player.class)) {
             if (gameData.getKeys().isDown(GameKeys.LEFT)) {
-                player.setRotation(player.getRotation() - 5);                
+                player.setRotation(player.getRotation() - 5 * speed);
             }
             if (gameData.getKeys().isDown(GameKeys.RIGHT)) {
-                player.setRotation(player.getRotation() + 5);                
+                player.setRotation(player.getRotation() + 5 * speed);
             }
             if (gameData.getKeys().isDown(GameKeys.UP)) {
                 double changeX = Math.cos(Math.toRadians(player.getRotation()));
                 double changeY = Math.sin(Math.toRadians(player.getRotation()));
-                player.setX(player.getX() + changeX);
-                player.setY(player.getY() + changeY);
+                player.setX(player.getX() + changeX * speed);
+                player.setY(player.getY() + changeY * speed);
+            }
+            if (gameData.getKeys().isDown(GameKeys.SPACE)) {
+                for(BulletSPI bulletSPI : getBulletSPIs()){
+                    world.addEntity(bulletSPI.createBullet(player, gameData));
+                }
             }
             
         if (player.getX() < 0) {
@@ -47,8 +52,7 @@ public class PlayerControlSystem implements IEntityProcessingService {
         if (player.getY() > gameData.getDisplayHeight()) {
             player.setY(gameData.getDisplayHeight()-1);
         }
-            
-                                        
+
         }
     }
 
